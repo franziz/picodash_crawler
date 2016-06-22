@@ -18,6 +18,8 @@ for document in db.places.find():
 	))
 #end for
 
+current_thread = 0
+max_thread     = 10
 for document in documents:
 	while current_thread >= max_thread:
 		time.sleep(random.randint(10/500)/1000)
