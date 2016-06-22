@@ -15,7 +15,7 @@ class Runner(object):
 		try:
 			self.db.picodash_test.insert_one(media)
 			# print(bson.json_util.dumps(media, indent=4, separators=(",",":")))
-			print("[picodas_crawler] Inserted one document!")
+			print("[picodash_crawler] Inserted one document!")
 		except pymongo.errors.DuplicateKeyError:
 			print("[picodash_crawler] Duplicate Data!")
 
