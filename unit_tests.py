@@ -6,11 +6,22 @@ import time
 import random
 
 def execute_runner(document=None):
-	assert document is not None, "document is not defined."
-	print(document)
+	try:
+		assert document is not None, "document is not defined."
 
-	global current_thread
-	current_thread = current_thread - 1
+		runner = Runner()
+		runner.run(
+			   place = document,
+			username = "xzerocool",
+			password = "isidsea",
+			  driver = Engine.PHANTOMJS
+		)
+	except:
+		print("[picodash_crawler] Ops! Something wrong!")
+	finally:
+		global current_thread
+		current_thread = current_thread - 1
+#end def
 
 db        = MongoClient("mongodb://isid:isid123@192.168.1.14/?authSource=admin")
 db        = db.hotp
