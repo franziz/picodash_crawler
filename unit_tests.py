@@ -35,7 +35,7 @@ for document in documents:
 	while current_thread >= max_thread:
 		time.sleep(random.randint(10/500)/1000)
 
-	_thread.start_new_thread(execute_runner, (document))
+	_thread.start_new_thread(execute_runner, (document,))
 	current_thread = current_thread + 1
 
 # MOCK_INPUT = {
