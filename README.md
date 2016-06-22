@@ -16,7 +16,32 @@ Sample Input
 }
 ```
 
+# Requirement
+1. Python 3
+2. arrow
+3. pymongo
+4. pytz
+5. tzlocal
+6. selenium
+
+```bash
+pip3 install arrow pymongo tzlocal pytz selenium
+```
+
+NOTE: Some of requirements maybe not listed. In order to run this properly, you might want to pull this application docker image.
+
+```bash
+docker pull franziz/picodash_crawler
+docker run -it --name picodash_crawler franziz/picodash_crawler
+```
+
 # How to use
+This git is an application level. There is not configuration file to customize this application. In order to use this application, just simply run 
+```bash
+python3 run.py
+```
+
+# Under the hood
 the INPUT from the example is using MOCK_INPUT. You can change the INPUT depends on the requirement. However, the template is mentioned above.
 ```python
 from engine import Engine
