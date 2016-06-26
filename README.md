@@ -36,13 +36,20 @@ docker run -it --name picodash_crawler franziz/picodash_crawler
 ```
 
 # Simple Usage
+Setting up config file. The default config file is located at `/root/app/config.json`. If you are using picodash_crawler image, you need to make config file from there.
+```json
+{
+	"ig":{
+		"username":"amoure20",
+		"password":"081703706966"
+	}
+}
+```
+
 Because picodash.login() will save the cookies and close the browser, you need to make a new instance of `Picodash()`. This new Instance has a new ability to crawl the website.
 ```python
 	picodash = Picodash()
-	picodash.login(
-		ig_username = "xxx",
-		ig_password = "xxx"
-	)
+	picodash.login()
 
 	new_instance         = Picodash()
 	new_instance.cookies = picodash.cookies

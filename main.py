@@ -37,18 +37,15 @@ def execute_thread(location_data=None, cookies=None):
 
 try:
 	picodash = Picodash()
-	picodash.login(
-		ig_username = "amoure20",
-		ig_password = "081703706966"
-	)
+	picodash.login()
 
 	# location_data = LocationData()
 	# locations     = location_data.get_locations()
-	locations     = [MOCK_INPUT for a in range(10)]
+	locations     = [MOCK_INPUT for a in range(2)]
 
 	for location in locations:
 		procs = list()
-		for a in range(4):
+		for a in range(1):
 			p = multiprocessing.Process(
 				target = execute_thread,
 				  args = (location, picodash.cookies)

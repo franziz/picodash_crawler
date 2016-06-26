@@ -3,6 +3,7 @@ from selenium.webdriver.common.by  import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium                      import webdriver
 from .                             import tools
+from .config                       import Config
 import bson.json_util
 import copy
 import selenium
@@ -128,23 +129,23 @@ class Picodash(object):
 						           PostLikes = media.get_attribute("data-likes"),
 						             PostUrl = ig_url,
 						     PostGeolocation = dict(
-							  latitude = "",
-							      name = metadata_info[2].strip(),
-							longtitude = "",
-							        id = current_url.split("/")[5]
-						),
+													  latitude = "",
+													      name = metadata_info[2].strip(),
+													longtitude = "",
+													        id = current_url.split("/")[5]
+												),
 						            PostTags = tags,
 						            PostType = "image",
 						      PostFromUserId = media.get_attribute("class").split(" ")[1].split("_")[1],
 						    PostFromUsername = user.text,
 						  PostUserProfilePic = user_prof_pict.get_attribute("src"),
 						 QuerySearchLocation = dict(
-							    name = location_data["name"],
-							     lat = location_data["lat"],
-							    long = location_data["long"],
-							category = location_data["category"],
-							   track = location_data["track"]	
-						),
+													    name = location_data["name"],
+													     lat = location_data["lat"],
+													    long = location_data["long"],
+													category = location_data["category"],
+													   track = location_data["track"]	
+												),
 						    PostCreated_Time = "{}-{}-{}".format(published_date.year, str(published_date.month).zfill(2), str(published_date.day).zfill(2)),
 						   PostInserted_Date = "{}-{}-{}".format(arrow.now().year, str(arrow.now().month).zfill(2), str(arrow.now().day).zfill(2)),
 						          PostSource = "INSTAGRAM"
@@ -163,10 +164,17 @@ class Picodash(object):
 		#end for
 	#end def
 
-	def login(self, ig_username=None, ig_password=None):
+	def login(self):
 		try:
-			assert ig_username is not None, "ig_username is not defined."
-			assert ig_password is not None, "ig_password is not defined."
+			config = Config()
+			config = config.config
+
+			assert "ig"       in config      , "ig is not defined."
+			assert "username" in config["ig"], "username is not defined."
+			assert "password" in config["ig"], "password is not defined."
+
+			ig_username = config["ig"]["username"]
+			ig_password = config["ig"]["password"]
 
 			print("[picodash_crawler] Login-ing")
 
@@ -184,6 +192,7 @@ class Picodash(object):
 			txt_password.send_keys(ig_password)
 			btn_login.click()
 
+			# Saving cookies when it loads perfectly			
 			self.wait.until(lambda driver:"https://www.picodash.com/accounts/signup" in driver.current_url)
 			self.driver.get("https://www.picodash.com")
 			cookies      = self.driver.get_cookies()
