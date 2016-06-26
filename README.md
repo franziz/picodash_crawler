@@ -40,8 +40,8 @@ Setting up config file. The default config file is located at `/root/app/config.
 ```json
 {
 	"ig":{
-		"username":"amoure20",
-		"password":"081703706966"
+		"username":"xxx",
+		"password":"xxx"
 	}
 }
 ```
