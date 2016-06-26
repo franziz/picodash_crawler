@@ -11,41 +11,56 @@ MOCK_INPUT = {
 	  "address":""
 }
 
-from picodash import Picodash
-from selenium import webdriver
+from lib.location_data import LocationData
+from lib.picodash      import Picodash
+from selenium          import webdriver
 import selenium
-import _thread
 import copy
 import bson.json_util
+import multiprocessing
 
 def callback(media=None):
 	assert media is not None, "media is not defined."
 	print(bson.json_util.dumps(media, indent=4, separators=(",",":")))
 #end def
 
-def execute_thread(cookies=None):	
-	assert cookies is not None, "cookies is not defined."
+def execute_thread(location_data=None, cookies=None):	
+	assert cookies       is not None, "cookies is not defined."
+	assert location_data is not None, "location_data is not defined."
+
+	print("[picodash_crawler] Engine start!")
 
 	picodash         = Picodash()
 	picodash.cookies = cookies
 	picodash.apply_cookies()
-	instance.crawl(location_data=MOCK_INPUT, callback=callback)		
+	picodash.crawl(location_data=location_data, callback=callback)
 
 try:
 	picodash = Picodash()
 	picodash.login(
 		ig_username = "amoure20",
 		ig_password = "081703706966"
-	)	
-	# instance = picodash.new_instance()
-	# instance.crawl(location_data=MOCK_INPUT, callback=callback)		
-	_thread.start_new_thread(execute_thread,(picodash.cookies,))
-	# _thread.start_new_thread(execute_thread,(picodash,))
-	# _thread.start_new_thread(execute_thread,(picodash,))
+	)
 
-	while 1:
-		pass
+	# location_data = LocationData()
+	# locations     = location_data.get_locations()
+	locations     = [MOCK_INPUT for a in range(10)]
+
+	for location in locations:
+		procs = list()
+		for a in range(4):
+			p = multiprocessing.Process(
+				target = execute_thread,
+				  args = (location, picodash.cookies)
+			)
+			procs.append(p)
+			p.start()
+
+		for p in procs:
+			p.join()
+	
 except selenium.common.exceptions.TimeoutException:
-	instance.driver.save_screenshot("./picodash.png")
+	picodash.driver.save_screenshot("./error.png")
+	# instance.driver.save_screenshot("./picodash.png")
 except:
 	raise

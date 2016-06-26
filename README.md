@@ -35,25 +35,17 @@ docker pull franziz/picodash_crawler
 docker run -it --name picodash_crawler franziz/picodash_crawler
 ```
 
-# How to use
-This git is an application level. There is not configuration file to customize this application. In order to use this application, just simply run 
-```bash
-python3 run.py
-```
-
-# Under the hood
-the INPUT from the example is using MOCK_INPUT. You can change the INPUT depends on the requirement. However, the template is mentioned above.
+# Simple Usage
+Because picodash.login() will save the cookies and close the browser, you need to make a new instance of `Picodash()`. This new Instance has a new ability to crawl the website.
 ```python
-from engine import Engine
-import bson.json_util
+	picodash = Picodash()
+	picodash.login(
+		ig_username = "xxx",
+		ig_password = "xxx"
+	)
 
-def callback(media=None):
-	assert media is not None, "media is not defined."
-	print(bson.json_util.dumps(media, indent=4, separators=(",",":")))
-
-engine             = Engine(driver=Engine.CHROME)
-engine.INPUT       = MOCK_INPUT
-engine.ig_username = "xzerocool"
-engine.ig_password = "isidsea"
-engine.crawl(callback)
+	new_instance         = Picodash()
+	new_instance.cookies = picodash.cookies
+	new_instance.apply_cookies()
+	new_instance.crawl(location_data=MOCK_INPUT, callback=callback)	
 ```

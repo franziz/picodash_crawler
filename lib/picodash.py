@@ -2,13 +2,13 @@ from selenium.webdriver.support    import expected_conditions as EC
 from selenium.webdriver.common.by  import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium                      import webdriver
+from .                             import tools
 import bson.json_util
 import copy
 import selenium
 import time
 import random
 import arrow
-import tools
 
 class Picodash(object):
 	def __init__(self):
@@ -21,6 +21,8 @@ class Picodash(object):
 		self.driver.get("https://www.picodash.com/")
 
 	def crawl(self, location_data=None, callback=None):
+		assert self.driver         is not None     , "driver is not defined."
+		assert self.wait           is not None     , "wait is not defined."
 		assert callback            is not None     , "callback is not defined."
 		assert location_data       is not None     , "location_data is not defined."
 		assert type(location_data) is dict         , "location_data should be a dict data type."
@@ -31,12 +33,14 @@ class Picodash(object):
 		assert "country"           in location_data, "cannot find 'country' in location_data."
 		assert "name"              in location_data, "cannot find 'name' in location_data."
 		assert "category"          in location_data, "cannot find 'category' in location_data."
-
-		location_url = "https://www.picodash.com/explore/locations?location={lat}%{long}".format(
+		
+		print("[picodash_crawler] Location: {},{}".format(location_data["lat"], location_data["long"]))
+		location_url = "https://www.picodash.com/explore/locations?location={lat}%20{long}".format(
 							 lat = location_data["lat"],
 							long = location_data["long"]
 						)
 		self.driver.get(location_url)
+		# self.driver.save_screenshot("./picodash_location.png")
 
 		# this will get all the locations listed in the URL
 		self.wait.until(lambda driver:driver.find_element_by_xpath("//div[@class='grid-cell']"))
@@ -52,7 +56,8 @@ class Picodash(object):
 			location_names.append(location_name)
 
 		# for each locations inside in the URL
-		for link in location_links:
+		for index, link in enumerate(location_links):
+			print("[picodash_crawler] Crawling: {}".format(location_names[index]))
 			self.driver.get(link)
 
 			# scrolling the media until it ends or hits limit of 100 scroll
@@ -72,9 +77,10 @@ class Picodash(object):
 					has_more = False
 			#end while
 
+			self.wait.until(lambda driver:driver.find_element_by_xpath("//div[@id='media']"))
 			media  = self.driver.find_element_by_xpath("//div[@id='media']")
 			photos = media.find_elements_by_class_name("grid-cell")
-
+			
 			for media in photos:
 				try:
 					# Wait until the expected dialog come to screen
@@ -162,10 +168,14 @@ class Picodash(object):
 			assert ig_username is not None, "ig_username is not defined."
 			assert ig_password is not None, "ig_password is not defined."
 
+			print("[picodash_crawler] Login-ing")
+
 			btn_login = self.driver.find_element_by_xpath('//*[@id="infobar"]/div[2]/a[1]')
 			btn_login.click()
 
 			self.wait.until(lambda driver:driver.find_element_by_xpath("//input[@id='id_username']"))
+			# self.driver.save_screenshot("ig_login.png")
+
 			txt_username = self.driver.find_element_by_xpath("//input[@id='id_username']")
 			txt_password = self.driver.find_element_by_xpath("//input[@id='id_password']")
 			btn_login    = self.driver.find_element_by_xpath("//input[@type='submit']")
@@ -180,6 +190,7 @@ class Picodash(object):
 			cookies      = [cookie for cookie in cookies if "picodash" in cookie["domain"]]
 			self.cookies = copy.deepcopy(cookies)
 			self.driver.quit()
+			self.driver = None
 		except:
 			raise
 
@@ -189,14 +200,3 @@ class Picodash(object):
 		for cookie in self.cookies:
 			self.driver.add_cookie(cookie)
 		self.driver.get("https://www.picodash.com")
-
-
-	# def new_instance(self):
-		# assert self.cookies is not None, "cookies is not defined."
-		# # TODO: Cookie problem when using PhantomJS(). Need to change to PhantomJS 2.2 ASAP
-		# instance = Picodash()
-		# for cookie in self.cookies:
-		# 	instance.driver.add_cookie(cookie)
-		# instance.driver.get("https://www.picodash.com")
-
-		# return instance
