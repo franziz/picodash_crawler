@@ -46,6 +46,7 @@ class Picodash(object):
 
 			# this will get all the locations listed in the URL
 			self.wait.until(lambda driver:driver.find_element_by_xpath("//div[@class='grid-cell']"))
+			time.sleep(random.randint(100,5000)/1000)
 			locations      = self.driver.find_elements_by_xpath("//div[@class='grid-cell']")
 			location_links = list()
 			location_names = list()
@@ -80,6 +81,7 @@ class Picodash(object):
 				#end while
 
 				self.wait.until(lambda driver:driver.find_element_by_xpath("//div[@id='media']"))
+				time.sleep(random.randint(100,5000)/1000)
 				media  = self.driver.find_element_by_xpath("//div[@id='media']")
 				photos = media.find_elements_by_class_name("grid-cell")
 				
