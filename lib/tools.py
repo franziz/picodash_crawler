@@ -9,7 +9,18 @@ import lxml
 import requests
 import arrow
 import socket
+import random
+import time
 
+
+def _human_type_speed(sentences=None, element=None):
+	assert sentences is not None, "sentences is not defined."
+	assert element   is not None, "element is nto defined."
+
+	for word in sentences:
+		element.send_keys(word)
+		time.sleep(random.randint(100,1000)/1000)
+#end def
 
 def _parse(url=None, parse=True):
 	assert url is not None, "url is not defined."

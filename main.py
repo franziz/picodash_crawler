@@ -13,20 +13,30 @@ MOCK_INPUT = {
 
 from lib.location_data import LocationData
 from lib.picodash      import Picodash
+from lib.media_saver   import MediaSaver
 from selenium          import webdriver
 import selenium
-import copy
 import bson.json_util
 import multiprocessing
+import pymongo
 
 def callback(media=None):
 	assert media is not None, "media is not defined."
-	print(bson.json_util.dumps(media, indent=4, separators=(",",":")))
+	try:
+		media_saver = MediaSaver()
+		media_saver.save(media)
+		print("[picodash_crawler] Inserted one document!")
+	except pymongo.errors.DuplicateKeyError:
+		print("[picodash_crawler] Ops! Duplicate Data!")
+
+	# print(bson.json_util.dumps(media, indent=4, separators=(",",":")))
 #end def
 
-def execute_thread(location_data=None, cookies=None):	
-	assert cookies       is not None, "cookies is not defined."
-	assert location_data is not None, "location_data is not defined."
+def execute_thread(data=None):	
+	assert data is not None, "data is not defined."
+
+	location_data = data[0]
+	cookies       = data[1]
 
 	print("[picodash_crawler] Engine start!")
 
@@ -35,29 +45,22 @@ def execute_thread(location_data=None, cookies=None):
 	picodash.apply_cookies()
 	picodash.crawl(location_data=location_data, callback=callback)
 
-try:
-	picodash = Picodash()
-	picodash.login()
+if __name__ == "__main__":
+	try:
+		picodash = Picodash()
+		picodash.login()
 
-	# location_data = LocationData()
-	# locations     = location_data.get_locations()
-	locations     = [MOCK_INPUT for a in range(2)]
+		location_data = LocationData()
+		locations     = location_data.get_locations()
+		locations     = [(location, picodash.cookies) for location in locations]
 
-	for location in locations:
-		procs = list()
-		for a in range(1):
-			p = multiprocessing.Process(
-				target = execute_thread,
-				  args = (location, picodash.cookies)
-			)
-			procs.append(p)
-			p.start()
+		print("[picodash_crawler] Number of Locations: {}".format(len(locations)))
 
-		for p in procs:
-			p.join()
-	
-except selenium.common.exceptions.TimeoutException:
-	picodash.driver.save_screenshot("./error.png")
-	# instance.driver.save_screenshot("./picodash.png")
-except:
-	raise
+		multi_process = multiprocessing.Pool(10)
+		multi_process.map(execute_thread, locations)		
+		
+	except selenium.common.exceptions.TimeoutException:
+		picodash.driver.save_screenshot("./error.png")
+		# instance.driver.save_screenshot("./picodash.png")
+	except:
+		raise

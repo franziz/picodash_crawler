@@ -58,7 +58,7 @@ class Picodash(object):
 
 		# for each locations inside in the URL
 		for index, link in enumerate(location_links):
-			print("[picodash_crawler] Crawling: {}".format(location_names[index]))
+			print("[picodash_crawler] Crawling: {}".format(location_names[index].encode("utf-8")))
 			self.driver.get(link)
 
 			# scrolling the media until it ends or hits limit of 100 scroll
@@ -155,13 +155,15 @@ class Picodash(object):
 					btn_close.click()
 				except ValueError:
 					print("[picodash_crawler] Something wrong!")
-				except selenium.common.exceptions.ElementNotVisibleExceptions:
+				except selenium.common.exceptions.ElementNotVisibleException:
 					print("[picodash_crawler] Something wrong!")
 				except:
 					raise
 				#end try
 			#end for
 		#end for
+		self.driver.quit()
+		self.driver = None
 	#end def
 
 	def login(self):
@@ -188,8 +190,8 @@ class Picodash(object):
 			txt_password = self.driver.find_element_by_xpath("//input[@id='id_password']")
 			btn_login    = self.driver.find_element_by_xpath("//input[@type='submit']")
 
-			txt_username.send_keys(ig_username)
-			txt_password.send_keys(ig_password)
+			tools._human_type_speed(element=txt_username, sentences=ig_username)
+			tools._human_type_speed(element=txt_password, sentences=ig_password)
 			btn_login.click()
 
 			# Saving cookies when it loads perfectly			

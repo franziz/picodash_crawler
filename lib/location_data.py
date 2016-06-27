@@ -2,7 +2,7 @@ from pymongo import MongoClient
 
 class LocationData(object):
 	def __init__(self):
-		self.db = MongoClient("mongodb://mongo:27017/test")
+		self.db = MongoClient("mongodb://220.100.163.132:27017/test")
 		self.db = self.db.hotp		
 
 	def get_locations(self):
