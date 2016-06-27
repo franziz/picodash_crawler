@@ -22,7 +22,6 @@ class Picodash(object):
 		self.driver.get("https://www.picodash.com/")
 
 	def crawl(self, location_data=None, callback=None):
-<<<<<<< HEAD
 		try:
 			assert self.driver         is not None     , "driver is not defined."
 			assert self.wait           is not None     , "wait is not defined."
@@ -36,68 +35,6 @@ class Picodash(object):
 			assert "country"           in location_data, "cannot find 'country' in location_data."
 			assert "name"              in location_data, "cannot find 'name' in location_data."
 			assert "category"          in location_data, "cannot find 'category' in location_data."
-=======
-		assert self.driver         is not None     , "driver is not defined."
-		assert self.wait           is not None     , "wait is not defined."
-		assert callback            is not None     , "callback is not defined."
-		assert location_data       is not None     , "location_data is not defined."
-		assert type(location_data) is dict         , "location_data should be a dict data type."
-		assert "lat"               in location_data, "cannot find 'lat' in location_data."
-		assert "long"              in location_data, "cannot find 'long' in location_data."
-		assert "track"             in location_data, "cannot find 'track' in location_data."
-		assert "city"              in location_data, "cannot find 'city' in location_data."
-		assert "country"           in location_data, "cannot find 'country' in location_data."
-		assert "name"              in location_data, "cannot find 'name' in location_data."
-		assert "category"          in location_data, "cannot find 'category' in location_data."
-		
-		print("[picodash_crawler] Location: {},{}".format(location_data["lat"], location_data["long"]))
-		location_url = "https://www.picodash.com/explore/locations?location={lat}%20{long}".format(
-							 lat = location_data["lat"],
-							long = location_data["long"]
-						)
-		self.driver.get(location_url)
-		# self.driver.save_screenshot("./picodash_location.png")
-
-		# this will get all the locations listed in the URL
-		self.wait.until(lambda driver:driver.find_element_by_xpath("//div[@class='grid-cell']"))
-		locations      = self.driver.find_elements_by_xpath("//div[@class='grid-cell']")
-		location_links = list()
-		location_names = list()
-		for location in locations:
-			location_name = location.text
-			location_name = location_name.replace("\n","")
-			location_link = location.find_element_by_xpath(".//a")
-			location_link = location_link.get_attribute("href")
-			location_links.append(location_link)
-			location_names.append(location_name)
-
-		# for each locations inside in the URL
-		for index, link in enumerate(location_links):
-			print("[picodash_crawler] Crawling: {}".format(location_names[index].encode("utf-8")))
-			self.driver.get(link)
-
-			# scrolling the media until it ends or hits limit of 100 scroll
-			has_more = True
-			max_more = 100
-			tried    = 0
-			while has_more:
-				more  = self.driver.find_element_by_xpath("//div[@id='more']")
-				style = more.get_attribute("style")
-				if "display: none;" not in style and style and tried < max_more:
-					more  = more.get_attribute("onclick")
-					tried = tried + 1
-
-					self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight+10)")
-					time.sleep(random.randint(100,500)/1000)
-				else:
-					has_more = False
-			#end while
-
-			self.wait.until(lambda driver:driver.find_element_by_xpath("//div[@id='media']"))
-			time.sleep(random.randint(100,5000)/1000)
-			media  = self.driver.find_element_by_xpath("//div[@id='media']")
-			photos = media.find_elements_by_class_name("grid-cell")
->>>>>>> origin/bleeding_edge
 			
 			print("[picodash_crawler] Location: {},{}".format(location_data["lat"], location_data["long"]))
 			location_url = "https://www.picodash.com/explore/locations?location={lat}%20{long}".format(
