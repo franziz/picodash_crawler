@@ -79,6 +79,7 @@ class Picodash(object):
 			#end while
 
 			self.wait.until(lambda driver:driver.find_element_by_xpath("//div[@id='media']"))
+			time.sleep(random.randint(100,5000)/1000)
 			media  = self.driver.find_element_by_xpath("//div[@id='media']")
 			photos = media.find_elements_by_class_name("grid-cell")
 			
