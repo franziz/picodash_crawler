@@ -33,17 +33,22 @@ def callback(media=None):
 #end def
 
 def execute_thread(data=None):	
-	assert data is not None, "data is not defined."
+	try:	
+		assert data is not None, "data is not defined."
 
-	location_data = data[0]
-	cookies       = data[1]
+		location_data = data[0]
+		cookies       = data[1]
 
-	print("[picodash_crawler] Engine start!")
+		print("[picodash_crawler] Engine start!")
 
-	picodash         = Picodash()
-	picodash.cookies = cookies
-	picodash.apply_cookies()
-	picodash.crawl(location_data=location_data, callback=callback)
+		picodash         = Picodash()
+		picodash.cookies = cookies
+		picodash.apply_cookies()
+		picodash.crawl(location_data=location_data, callback=callback)
+	except AssertionError:
+		print("[picodash_crawler] Assertion is not satisfied.")
+	except:
+		print("[picodash_crawler] Ops! Soemthing wrong!")
 
 if __name__ == "__main__":
 	try:
@@ -57,10 +62,6 @@ if __name__ == "__main__":
 		print("[picodash_crawler] Number of Locations: {}".format(len(locations)))
 
 		multi_process = multiprocessing.Pool(10)
-		multi_process.map(execute_thread, locations)		
-		
-	except selenium.common.exceptions.TimeoutException:
-		picodash.driver.save_screenshot("./error.png")
-		# instance.driver.save_screenshot("./picodash.png")
+		multi_process.map(execute_thread, locations)
 	except:
 		raise

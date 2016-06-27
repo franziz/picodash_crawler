@@ -166,6 +166,8 @@ class Picodash(object):
 				#end for
 			#end for
 		except:
+			print(self.driver.current_url)
+			self.driver.save_screenshot("./error.png")
 			raise
 		finally:
 			self.driver.quit()
