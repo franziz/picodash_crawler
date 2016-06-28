@@ -14,6 +14,7 @@ MOCK_INPUT = {
 from lib.location_data import LocationData
 from lib.picodash      import Picodash
 from lib.media_saver   import MediaSaver
+from lib.exceptions    import LoginErrorException
 from selenium          import webdriver
 import selenium
 import bson.json_util
@@ -27,7 +28,7 @@ def callback(media=None):
 		media_saver.save(media)
 		print("[picodash_crawler] Inserted one document!")
 	except pymongo.errors.DuplicateKeyError:
-		print("[picodash_crawler] Ops! Duplicate Data!")
+		raise
 
 	# print(bson.json_util.dumps(media, indent=4, separators=(",",":")))
 #end def
@@ -47,8 +48,8 @@ def execute_thread(data=None):
 		picodash.crawl(location_data=location_data, callback=callback)
 	except AssertionError:
 		print("[picodash_crawler] Assertion is not satisfied.")
-	except:
-		print("[picodash_crawler] Ops! Soemthing wrong!")
+	except LoginErrorException as e:
+		print("[picodash_crawler] {}".format(e.value))
 
 if __name__ == "__main__":
 	try:
