@@ -64,5 +64,9 @@ if __name__ == "__main__":
 
 		multi_process = multiprocessing.Pool(10)
 		multi_process.map(execute_thread, locations)
+	except selenium.common.exceptions.NoSuchElementException:
+		if picodash.driver is not None:
+			print(picodash.driver.current_url)
+			picodash.driver.save_screenshot("./error.png")
 	except:
 		raise
