@@ -179,16 +179,8 @@ class Picodash(object):
 					#end for
 				except selenium.common.exceptions.TimeoutException:
 					print(self.driver.current_url)
+					self.driver.save_screenshot("./timeout.png")
 					print("[picodash_crawler] Timeout when go into location name! Go to next location name")
-
-					# try to re-login again
-					self.quit()
-					self.__init__()
-					self.login()
-					tmp_cookies = copy.deepcopy(self.cookies)
-					self.__init__()
-					self.cookies = tmp_cookies
-					self.apply_cookies()
 				except:
 					raise
 			#end for
