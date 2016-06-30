@@ -1,6 +1,5 @@
 from lxml import html
-# from proxy_switcher import ProxySwitcher
-# from forum_engine import exceptions
+from tqdm import tqdm
 import pymongo
 import dateutil.parser
 import pytz
@@ -12,6 +11,10 @@ import socket
 import random
 import time
 
+def _wait(duration=None, title=""):
+	assert duration is not None, "duration is not defined."
+	for a in tqdm(range(duration)):
+		time.sleep(1)
 
 def _human_type_speed(sentences=None, element=None):
 	assert sentences is not None, "sentences is not defined."

@@ -11,15 +11,17 @@ MOCK_INPUT = {
 	  "address":""
 }
 
-from lib.location_data import LocationData
-from lib.picodash      import Picodash
-from lib.media_saver   import MediaSaver
-from lib.exceptions    import LoginErrorException
-from selenium          import webdriver
+from lib.location_data   import LocationData
+from lib.picodash.engine import Picodash
+from lib.media.saver     import MediaSaver
+from lib.exceptions      import LoginErrorException, DuplicateData
+from selenium            import webdriver
+from pymongo             import MongoClient
 import selenium
 import bson.json_util
 import multiprocessing
 import pymongo
+import pyprind
 
 def callback(media=None):
 	assert media is not None, "media is not defined."
@@ -28,45 +30,51 @@ def callback(media=None):
 		media_saver.save(media)
 		print("[picodash_crawler] Inserted one document!")
 	except pymongo.errors.DuplicateKeyError:
-		raise
+		print("[picodash_crawler] Ops! Duplicate Data! {}".format(media["PostCreated_Time"]))
+		raise DuplicateData("Duplicate data on database.")
 
 	# print(bson.json_util.dumps(media, indent=4, separators=(",",":")))
 #end def
 
 def execute_thread(data=None):	
+	current = multiprocessing.current_process()
+	db      = MongoClient("mongodb://mongo:27017/test")
+	db      = db.monitor
+
 	try:	
 		assert data is not None, "data is not defined."
-
-		location_data = data[0]
-		cookies       = data[1]
-
 		print("[picodash_crawler] Engine start!")
+
+		db.pico_worker.update({"name":current.name},{"$set":{
+			  "name" : current.name,
+			"status" : "working"
+		}},upsert=True)
+
+		location_data    = data[0]
+		cookies          = data[1]
 
 		picodash         = Picodash()
 		picodash.cookies = cookies
 		picodash.apply_cookies()
 		picodash.crawl(location_data=location_data, callback=callback)
+
+		db.pico_worker.update({"name":current.name},{"$set":{
+			  "name" : current.name,
+			"status" : "finished"
+		}},upsert=True)
+
+		print("[picodash_crawler] Crawler DEAD!")
 	except AssertionError:
 		print("[picodash_crawler] Assertion is not satisfied.")
-	except LoginErrorException as e:
-		print("[picodash_crawler] {}".format(e.value))
 
-if __name__ == "__main__":
-	try:
-		picodash = Picodash()
-		picodash.login()
+if __name__ == "__main__":	
+	picodash           = Picodash()
+	picodash.login()
 
-		location_data = LocationData()
-		locations     = location_data.get_locations()
-		locations     = [(location, picodash.cookies) for location in locations]
-
-		print("[picodash_crawler] Number of Locations: {}".format(len(locations)))
-
-		multi_process = multiprocessing.Pool(10)
-		multi_process.map(execute_thread, locations)
-	except selenium.common.exceptions.NoSuchElementException:
-		if picodash.driver is not None:
-			print(picodash.driver.current_url)
-			picodash.driver.save_screenshot("./error.png")
-	except:
-		raise
+	location_data = LocationData()
+	locations     = location_data.get_locations()
+	print("[picodash_crawler] Number of Locations: {}".format(len(locations)))
+	
+	locations     = [(location, picodash.cookies) for location in locations]
+	multi_process = multiprocessing.Pool(20)
+	multi_process.map(execute_thread, locations)
