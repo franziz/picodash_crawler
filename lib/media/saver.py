@@ -8,12 +8,12 @@ class MediaSaver(object):
 		self.db = MongoClient("mongodb://hotp:hotp7890@220.100.163.134:27017/test?authSource=hotp")
 		self.db = self.db.hotp
 
-		tools._force_create_index(self.db, "picodash_test", "PostUrl")
+		tools._force_create_index(self.db, "hotp_getposts", "PostUrl")
 
 	def save(self, media=None):
 		assert self.db    is not None, "db is not defined."
 		assert media      is not None, "media is not defined."
 
-		self.db.picodash_test.insert_one(media)
+		self.db.hotp_getposts.insert_one(media)
 
 

@@ -37,6 +37,7 @@ class LocationExtractor():
 		time.sleep(random.randint(100,5000)/1000)
 		location_components = self.driver.find_elements_by_xpath("//div[@class='grid-cell']")
 		locations           = list()
+		del location_components[0]
 		for location in location_components:
 			location_name = location.text
 			location_name = location_name.replace("\n","")
