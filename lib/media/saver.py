@@ -4,7 +4,7 @@ from ..      import tools
 class MediaSaver(object):
 	def __init__(self):
 		self.db = None
-		self.db = MongoClient("mongodb://220.100.163.132:27017/test")
+		self.db = MongoClient("mongodb://hotp:hotp7890@220.100.163.134:27017/test?authSource=hotp")
 		self.db = self.db.hotp
 
 		tools._force_create_index(self.db, "picodash_test", "PostUrl")

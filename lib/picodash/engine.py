@@ -64,7 +64,7 @@ class Picodash(object):
 						try:
 							print("[picodash_crawler] Crawling: {}".format(name.encode("utf-8")))
 							self.driver.get(link)					
-							self.browser_tools.scroll(max_scroll=100)
+							self.browser_tools.scroll(max_scroll=2)
 
 							media_extractor = MediaExtractor(self.driver)
 							photos          = media_extractor.extract()
