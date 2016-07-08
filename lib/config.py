@@ -14,5 +14,6 @@ class Config(object):
 	
 
 	def read(self):
-		f           = open("/root/app/config.json","r")		
+		# TODO: probably add more option to place the config file
+		f            = open("/root/app/config.json","r")		
 		self._config = json.load(f)		
