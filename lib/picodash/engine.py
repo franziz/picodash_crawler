@@ -218,6 +218,7 @@ class Picodash(object):
 					self.cookies = copy.deepcopy(cookies)
 					self.quit()
 				else:
+					self.driver.save_screenshot("login_error.png")
 					self.quit()
 					self.__init__()
 					print("[picodash_crawler] Need to re-login")
