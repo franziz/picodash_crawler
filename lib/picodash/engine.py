@@ -218,6 +218,7 @@ class Picodash(object):
 					self.cookies = copy.deepcopy(cookies)
 					self.quit()
 				else:
+					print("[picodash_crawler] {}".format(self.driver.current_url.encode("utf-8")))
 					self.driver.save_screenshot("login_error.png")
 					self.quit()
 					self.__init__()
