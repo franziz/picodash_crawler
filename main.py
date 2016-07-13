@@ -37,9 +37,10 @@ def callback(media=None):
 #end def
 
 def execute_thread(data=None):	
-	current = multiprocessing.current_process()
-	db      = MongoClient("mongodb://mongo:27017/test")
-	db      = db.monitor
+	current       = multiprocessing.current_process()
+	db            = MongoClient("mongodb://mongo:27017/test")
+	db            = db.monitor
+	location_data = LocationData()
 
 	try:	
 		assert data is not None, "data is not defined."
@@ -50,14 +51,16 @@ def execute_thread(data=None):
 			"status" : "working"
 		}},upsert=True)
 
-		location_data    = data[0]
-		cookies          = data[1]
+		location = data[0]
+		cookies  = data[1]
+		location_data.set_as_processing(location)
 
 		picodash         = Picodash()
 		picodash.cookies = cookies
 		picodash.apply_cookies()
-		picodash.crawl(location_data=location_data, callback=callback)
+		picodash.crawl(location_data=location, callback=callback)
 
+		location_data.set_as_processed(location)
 		db.pico_worker.update({"name":current.name},{"$set":{
 			  "name" : current.name,
 			"status" : "finished"
