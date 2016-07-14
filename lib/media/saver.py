@@ -14,6 +14,6 @@ class MediaSaver(object):
 		assert self.db    is not None, "db is not defined."
 		assert media      is not None, "media is not defined."
 
-		self.db.hotp_getposts.insert_one(media)
+		self.db.hotp_geoposts.insert_one(media)
 
 
