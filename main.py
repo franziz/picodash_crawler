@@ -61,17 +61,17 @@ def execute_thread(data=None):
 		picodash.crawl(location_data=location, callback=callback)
 
 		location_data.set_as_processed(location)
+	except AssertionError:
+		print("[picodash_crawler] Assertion is not satisfied.")
+	finally:
 		db.pico_worker.update({"name":current.name},{"$set":{
 			  "name" : current.name,
 			"status" : "finished"
-		}},upsert=True)
-
+		}},upsert=True)		
 		print("[picodash_crawler] Crawler DEAD!")
-	except AssertionError:
-		print("[picodash_crawler] Assertion is not satisfied.")
 
-if __name__ == "__main__":	
-	picodash           = Picodash()
+if __name__ == "__main__":
+	picodash = Picodash()
 	picodash.login()
 
 	location_data = LocationData()
@@ -79,5 +79,14 @@ if __name__ == "__main__":
 	print("[picodash_crawler] Number of Locations: {}".format(len(locations)))
 	
 	locations     = [(location, picodash.cookies) for location in locations]
-	multi_process = multiprocessing.Pool(20)
+	multi_process = multiprocessing.Pool(10)
 	multi_process.map(execute_thread, locations)
+
+# worker = multiprocessing.Process(target=execute_worker, args=(value,key), daemon=False)
+# workers.append(worker)
+
+# for worker in workers:
+# 	worker.start()
+
+# for worker in workers:
+# 	worker.join()
