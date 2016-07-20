@@ -22,9 +22,9 @@ class LocationData(object):
 							{"status":"processing"},
 							{"status":None}
 						 ]
-			locations  = self.db[self.collection_name].find({"$or":conditions})
+			locations  = self.db[self.collection_name].find({"$or":conditions, "$and":[{"is_active":True}]})
 		else:
-			locations = self.db[self.collection_name].find()
+			locations = self.db[self.collection_name].find({"is_active":True})
 		locations = [document for document in locations]
 
 		if len(locations) == 0 and not all:
