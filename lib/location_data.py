@@ -22,7 +22,7 @@ class LocationData(object):
 				self.db[self.collection_name].update_one({"_id":_id},{"$set":{"status":status}})
 				success = True
 			except pymongo.errors.AutoReconnect:
-				pass
+				self._connect()
 			except:
 				raise
 	#end def
