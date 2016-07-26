@@ -128,6 +128,7 @@ class Picodash(object):
 												),
 						    PostCreated_Time = "{}-{}-{}".format(published_date.year, str(published_date.month).zfill(2), str(published_date.day).zfill(2)),
 						   PostInserted_Date = "{}-{}-{}".format(arrow.now().year, str(arrow.now().month).zfill(2), str(arrow.now().day).zfill(2)),
+					   PostInserted_Date_ISO = arrow.now().datetime,
 						          PostSource = "INSTAGRAM"
 					)
 					# print(bson.json_util.dumps(media, indent=4, separators=(",",":")))
