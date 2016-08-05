@@ -1,16 +1,3 @@
-global MOCK_INPUT
-MOCK_INPUT = {
-	     "name":" autogenPointII 1",
-	      "lat":"14.6526527",
-	     "long":"120.881398",
-	 "category":"blanketCover",
-	    "track":"MakatiBlanket",
-	     "city":"Makati",
-	  "country":"Philippines",
-	"processed":"FALSE",
-	  "address":""
-}
-
 from lib.location_data   import LocationData
 from lib.picodash.engine import Picodash
 from lib.media.saver     import MediaSaver
