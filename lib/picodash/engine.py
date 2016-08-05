@@ -82,7 +82,7 @@ class Picodash(object):
 					user           = media.find_element_by_xpath('//div[@class="lb-title"]/a/b')
 					more_info      = media.find_element_by_xpath(".//div[@class='moreInfo']/a")
 					user_prof_pict = media.find_element_by_xpath('//*[@id="lb-content"]/div[7]/div[2]/a/img')
-					caption        = media.find_element_by_xpath('//*[@id="lb-content"]/div[7]/div[3]')
+					caption        = media.find_element_by_xpath('//*[@id="lb-content"]/div[7]/div[4]')
 
 					tags           = media.find_elements_by_xpath('//*[@id="lb-content"]/div[7]/div[3]//a')
 					tags           = [tag.text for tag in tags if "tags" in tag.get_attribute("href")]
