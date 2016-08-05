@@ -57,11 +57,11 @@ class Picodash(object):
 			name    = location["name"]
 			print("[picodash_crawler] Crawling: {}".format(name.encode("utf-8")))
 			self.driver.get(link)					
-			self.browser_tools.scroll(max_scroll=2)
+			self.browser_tools.scroll(max_scroll=4)
 
 			media_extractor = MediaExtractor(self.driver)
 			photos          = media_extractor.extract()
-
+			print("[picodash_crawler] Got {} photos".format(len(photos)))
 			for media in photos:
 				# This try catch exception will skip the media if something goes wrong with the media
 				try:
@@ -83,7 +83,7 @@ class Picodash(object):
 					more_info      = media.find_element_by_xpath(".//div[@class='moreInfo']/a")
 					user_prof_pict = media.find_element_by_xpath('//*[@id="lb-content"]/div[7]/div[2]/a/img')
 					caption        = media.find_element_by_xpath('//*[@id="lb-content"]/div[7]/div[4]')
-
+					
 					tags           = media.find_elements_by_xpath('//*[@id="lb-content"]/div[7]/div[3]//a')
 					tags           = [tag.text for tag in tags if "tags" in tag.get_attribute("href")]
 					
