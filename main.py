@@ -81,12 +81,3 @@ if __name__ == "__main__":
 	locations     = [(location, picodash.cookies) for location in locations]
 	multi_process = multiprocessing.Pool(10)
 	multi_process.map(execute_thread, locations)
-
-# worker = multiprocessing.Process(target=execute_worker, args=(value,key), daemon=False)
-# workers.append(worker)
-
-# for worker in workers:
-# 	worker.start()
-
-# for worker in workers:
-# 	worker.join()
