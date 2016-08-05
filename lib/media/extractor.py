@@ -1,11 +1,15 @@
-from .. import tools
+from ..      import tools, exceptions
+from pymongo import MongoClient
 import selenium
 import time
 import random
+import copy
 
 class MediaExtractor(object):
 	def __init__(self, webdriver=None):
 		self.driver = webdriver
+		self.db     = MongoClient("mongodb://hotp:hotp7890@220.100.163.134:27017/test?authSource=hotp")
+		self.db  	= self.db.hotp
 
 	def extract(self):
 		""" This function has to be success.
@@ -15,7 +19,7 @@ class MediaExtractor(object):
 		while not success:
 			try:
 				assert self.driver is not None, "driver is not defined."
-				print("[igfollowers] Getting media")
+				print("[picodash_crawler] Getting media")
 				max_tried = 10
 				tried     = 0
 				loaded    = False
@@ -30,8 +34,18 @@ class MediaExtractor(object):
 				if tried >= max_tried: raise exceptions.MaxTryExceeded("Max try exceeded while trying to get media.")
 
 				time.sleep(random.randint(100,5000)/1000)
-				media = self.driver.find_element_by_xpath("//div[@id='media']")
-				media = media.find_elements_by_class_name("grid-cell")
+				all_media = self.driver.find_element_by_xpath("//div[@id='media']")
+				all_media = all_media.find_elements_by_class_name("grid-cell")
+
+				# This function will check if the post_url has been inserted into database.
+				# The function will help to reduce total number of request.
+				media     = []
+				for medium in all_media:
+					post_url = medium.find_element_by_xpath("./div[@class='moreInfo']/a")
+					post_url = post_url.get_attribute("href")
+					duplicate = True if self.db.hotp_geoposts.count({"PostUrl":post_url}) > 0 else False
+					if not duplicate:
+						media.append(copy.copy(medium))
 				success = True
 			except exceptions.MaxTryExceeded:
 				# this will fail if MediaExtractor cannot find element
