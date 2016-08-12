@@ -171,10 +171,14 @@ class Picodash(object):
 
 				print("[picodash_crawler] Login-ing")
 
-				btn_login = self.driver.find_element_by_xpath('//*[@id="infobar"]/div[2]/a[1]')
+				btn_login = self.driver.find_element_by_xpath('//*[@id="loginTab"]')
+				btn_login.click()				
+
+				self.wait.until(lambda driver:driver.find_element_by_xpath('//*[@id="lb-popup"]'))
+				btn_login = self.driver.find_element_by_xpath('//*[@id="lb-popup"]/div/a[1]')
 				btn_login.click()
 
-				self.wait.until(lambda driver:driver.find_element_by_xpath("//input[@id='id_username']"))
+				self.wait.until(lambda driver:driver.find_element_by_xpath("//input[@id='id_username']"))				
 
 				txt_username = self.driver.find_element_by_xpath("//input[@id='id_username']")
 				txt_password = self.driver.find_element_by_xpath("//input[@id='id_password']")
@@ -183,6 +187,8 @@ class Picodash(object):
 				tools._human_type_speed(element=txt_username, sentences=ig_username)
 				tools._human_type_speed(element=txt_password, sentences=ig_password)
 				btn_login.click()
+				
+				self.wait.until(lambda driver:driver.find_element_by_xpath('//*[@id="activeinfo"]/div[3]/a'))				
 
 				# Saving cookies when it loads perfectly
 				self.driver.get("https://www.picodash.com/fransisid8117")
