@@ -96,6 +96,25 @@ class Picodash(object):
 					published_date = published_date[published_date.index("(")+1:-2]
 					published_date = tools._date_parser(published_date)
 
+					post_created_time = "%s-%s-%s %s:%s:%s" % (
+						published_date.year, 
+						str(published_date.month).zfill(2), 
+						str(published_date.day).zfill(2),
+						str(published_date.hour).zfill(2),
+						str(published_date.minute).zfill(2),
+						str(published_date.second).zfill(2)
+					)
+
+					now = arrow.now()
+					post_inserted_date = "%s-%s-%s %s:%s:%s" % (
+						now.year, 
+						str(now.month).zfill(2), 
+						str(now.day).zfill(2),
+						str(now.hour).zfill(2),
+						str(now.minute).zfill(2),
+						str(now.second).zfill(2)
+					)
+
 					current_url    = self.driver.current_url
 					ig_url         = media.find_element_by_xpath("//div[@class='lb-links']/div[1]/a").get_attribute("href")
 
@@ -126,9 +145,9 @@ class Picodash(object):
 													category = location_data["category"],
 													   track = location_data["track"]	
 												),
-						    PostCreated_Time = "{}-{}-{}".format(published_date.year, str(published_date.month).zfill(2), str(published_date.day).zfill(2)),
-						   PostInserted_Date = "{}-{}-{}".format(arrow.now().year, str(arrow.now().month).zfill(2), str(arrow.now().day).zfill(2)),
-					   PostInserted_Date_ISO = arrow.now().datetime,
+						    PostCreated_Time = post_created_time,
+						   PostInserted_Date = post_inserted_date,
+					   PostInserted_Date_ISO = arrow.utcnow().datetime,
 						          PostSource = "INSTAGRAM"
 					)
 					# print(bson.json_util.dumps(media, indent=4, separators=(",",":")))
