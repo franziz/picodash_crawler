@@ -1,0 +1,9 @@
+{
+	"sentry":{
+		"ip": "172.17.0.6",
+		"port": 9000,
+		"public_key": "fc0d0abcb86443c2bd2c77a1b240db7f",
+		"secret_key": "562f21d653c043eaa27c3231b24634ec",
+		"project_id": 4
+	}
+}
