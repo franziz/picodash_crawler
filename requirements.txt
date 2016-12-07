@@ -1,0 +1,6 @@
+contextlib2==0.5.4
+py==1.4.31
+pymongo==3.3.1
+pytest==3.0.4
+raven==5.32.0
+selenium==3.0.2

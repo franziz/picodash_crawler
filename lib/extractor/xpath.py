@@ -22,6 +22,7 @@ class XPATHExtractor:
 					success = True
 				except selenium.common.exceptions.TimeoutException:
 					tried += 1
+					browser.driver.save_screenshot("retry.jpg")
 					print("Retrying")
 			if tried >= max_retry:
 				browser.driver.save_screenshot("error.jpg")

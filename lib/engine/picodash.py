@@ -5,7 +5,7 @@ from ..exceptions 		 import VerificationIsNeeded, CannotFindElements
 
 class PicodashEngine:
 	def __init__(self, **kwargs):
-		self.proxy    = Proxy()
+		self.proxy    = kwargs.get("proxy", Proxy())
 		self.browser  = Browser(proxy=self.proxy)
 		self.username = kwargs.get("username", None)
 		self.password = kwargs.get("password", None)
@@ -97,5 +97,32 @@ class PicodashEngine:
 		self.browser.driver.save_screenshot("after_login.jpg")
 
 
-	def crawl(self):
-		pass
+	def crawl(self, location=None, saver=None, **kwargs):
+		""" Exceptions:
+			- AssertionErrror
+		"""
+		assert location is not None, "location is not defined."
+		assert saver    is not None, "saver is not defined."
+
+		start_date = kwargs.get("start_date", "")
+		end_date   = kwargs.get("end_date","")
+
+		# https://www.picodash.com/explore/map#/14.6723,120.9596/1000/-
+		# Go to the location
+		self.browser.get("https://www.picodash.com/explore/map#/%s,%s/%s/%s-%s" % (
+			location.lat,
+			location.long,
+			location.radius,
+			start_date,
+			end_date
+		))
+
+		extractor   = ExtractorFactory.get_extractor(ExtractorFactory.XPATH)
+		total_posts = extractor.extract(
+			browser = self.browser,
+			  xpath = '//div[@id="counter"]',
+			   wait = '//div[@id="counter"]'
+		)
+		total_posts = total_posts.text
+
+		print("Total Posts: %s" % total_posts)

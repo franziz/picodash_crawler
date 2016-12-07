@@ -1,6 +1,8 @@
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.support.ui                  import WebDriverWait
 from selenium   									import webdriver
+import time
+import random
 
 class Browser:
 	def __init__(self, url=None, proxy=None):
@@ -10,6 +12,8 @@ class Browser:
 			- ValidationError (Proxy.get_proxy)
 			- NoProxyfound
 		"""
+		self.cookies = None
+
 		cap                                               = DesiredCapabilities.PHANTOMJS.copy()
 		cap["phantomjs.page.settings.userAgent"]          = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:40.0) Gecko/20100101 Firefox/40.1"
 		cap["phantomjs.page.settings.loadImages"]         = False
@@ -46,4 +50,19 @@ class Browser:
 			- AssertionError
 		"""
 		assert self.driver is not None, "driver is not defined."
-		self.driver.close()
+		self.driver.quit()
+
+	def apply_cookies(self):
+		""" Exceptions:
+			- AssertionError
+		"""
+		assert self.cookies is not None, "cookies is not defined."
+		for cookie in self.cookies:
+			self.driver.add_cookie(cookie)
+		time.sleep(random.randint(1000,5000)/1000)
+
+	def get_cookies(self):
+		""" Exceptions:
+			- AssertionError
+		"""
+		return self.driver.get_cookies()
