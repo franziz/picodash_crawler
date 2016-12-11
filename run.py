@@ -51,20 +51,27 @@ def main(start, end, workers, noproxy):
 	engine.username = config["username"]
 	engine.password = config["password"]
 
-	engine.login()
-	with multiprocessing.Pool(workers) as pool:
-		# Getting cookie from browser
-		cookies = engine.browser.get_cookies()
-		cookies = [cookie for cookie in cookies if "picodash" in cookie["domain"]]
-		engine.browser.close()
+	try:
+		engine.login()
+		with multiprocessing.Pool(workers) as pool:
+			# Getting cookie from browser
+			cookies = engine.browser.get_cookies()
+			cookies = [cookie for cookie in cookies if "picodash" in cookie["domain"]]
+			engine.browser.close()
 
-		# Get locations from database 
-		finder    = FinderFactory.get_finder(FinderFactory.LOCATION)
-		locations = finder.find()
-		data 	  = [(location, cookies, start, end, proxy, ) for location in locations]
-		
-		pool.map(execute_thread, data)
+			# Get locations from database 
+			finder    = FinderFactory.get_finder(FinderFactory.LOCATION)
+			locations = finder.find()
+			data 	  = [(location, cookies, start, end, proxy, ) for location in locations]
+			
+			pool.map(execute_thread, data)
+			pool.join()
+	except WebDriverException as ex:
+		engine.browser.driver.save_screenshot(os.path.join(os.getcwd(),"screenshot", "error.jpg"))
+		print("[error] %s" % ex)
+	engine.browser.close()
 
 if __name__ == "__main__":
 	# Logger()
 	main()
+	

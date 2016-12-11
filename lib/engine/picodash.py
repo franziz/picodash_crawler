@@ -27,7 +27,7 @@ class PicodashEngine:
 		self.browser.get("https://www.picodash.com/")
 		self.browser.driver.save_screenshot(os.path.join(os.getcwd(),"screenshot", "before_login.jpg"))
 
-		self.browser.execute_script("return loginPop()")
+		self.browser.execute_script("loginPop()")
 		extractor = ExtractorFactory.get_extractor(ExtractorFactory.XPATH)
 		btn_yes = extractor.extract(
 			browser = self.browser,
