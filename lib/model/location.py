@@ -1,17 +1,27 @@
+import pymongo
 import copy 
 
 class Location:
 	def __init__(self, **kwargs):
-		self.source = kwargs.get("source", None)
-		self.id     = kwargs.get("id", None)
-		self.lat    = kwargs.get("lat", None)
-		self.long   = kwargs.get("long", None)
-		self.radius = kwargs.get("radius", 1000)
+		self.source   = kwargs.get("source", None)
+		self.id       = kwargs.get("id", None)
+		self.lat      = kwargs.get("lat", None)
+		self.long     = kwargs.get("long", None)
+		self.radius   = kwargs.get("radius", 1000)
+		self.name     = kwargs.get("name", None)
+		self.track    = kwargs.get("track", None)
+		self.category = kwargs.get("category", None)
+		self.city     = kwargs.get("city", None)
+		self.country  = kwargs.get("country", None)
 
 		if self.source is not None:
-			self.id   = copy.deepcopy(self.source["_id"])
-			self.lat  = copy.deepcopy(self.source["lat"])
-			self.long = copy.deepcopy(self.source["long"])
+			self.id      = copy.deepcopy(self.source["_id"])
+			self.lat     = copy.deepcopy(self.source["lat"])
+			self.long    = copy.deepcopy(self.source["long"])
+			self.track   = copy.deepcopy(self.source["track"])
+			self.city    = copy.deepcopy(self.source["city"])
+			self.country = copy.deepcopy(self.source["country"])
+			self.name    = copy.deepcopy(self.source["name"])
 
 	def update_status(self, status=None):
 		""" Exceptions:
@@ -40,7 +50,7 @@ class Location:
 		"""
 		self.update_status("processing")
 
-	def set_processed(self):
+	def set_as_processed(self):
 		""" Exceptions:
 			- AssertionError (self.update_status)
 		"""

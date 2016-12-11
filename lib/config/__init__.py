@@ -7,9 +7,14 @@ class Config:
 			- AssertionError
 		"""
 		assert file_name is not None, "file_name is not defined."
-		file        = open(file_name,"r")
+		file           = open(file_name,"r")
 		self.file_name = file_name
 		self.config    = json.load(file)
+
+	@property
+	def fields(self):
+		return list(self.config.keys())
+
 
 	def get(self, field_name=None):
 		""" Exceptions:

@@ -1,3 +1,5 @@
+from ..exceptions import ValidationError
+
 class ProxyConfigValidator:
 	def validate(self, config=None):
 		""" Exceptions:

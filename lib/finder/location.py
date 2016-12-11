@@ -1,3 +1,10 @@
+# from ..model.location import Location
+# import pymongo
+
+# class LocationFinder:
+# 	def find(self):
+# 		return [Location(lat=-7.2741, long=112.6449)]
+
 from ..model.location import Location
 import pymongo
 

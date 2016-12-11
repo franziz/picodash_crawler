@@ -1,5 +1,6 @@
 from ..exceptions import CannotFindElements
 import selenium
+import os
 
 class XPATHExtractor:
 	def extract(self, browser=None, xpath=None, **kwargs):
@@ -22,10 +23,10 @@ class XPATHExtractor:
 					success = True
 				except selenium.common.exceptions.TimeoutException:
 					tried += 1
-					browser.driver.save_screenshot("retry.jpg")
+					browser.driver.save_screenshot(os.path.join(os.getcwd(),"screenshot","retry.jpg"))
 					print("Retrying")
 			if tried >= max_retry:
-				browser.driver.save_screenshot("error.jpg")
+				browser.driver.save_screenshot(os.path.join(os.getcwd(), "screenshot", "error.jpg"))
 				raise CannotFindElements("You are waiting %s more than %s times" % (xpath, max_retry))
 		elements = browser.driver.find_elements_by_xpath(xpath)
 		

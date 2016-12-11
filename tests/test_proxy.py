@@ -16,13 +16,17 @@ def proxy():
 def test_get_proxy(proxy):	
 	proxy = proxy.get_proxy()
 
-	assert len(proxy) == 3
+	assert proxy.ip 	  is not None
+	assert proxy.port 	  is not None
+	assert proxy.username is not None
+	assert proxy.password is not None
 
 def test_browser_proxy(proxy):
 	browser = Browser(proxy=proxy)
-	browser.get("http://whatismyipaddress.com/")
+	browser.get("http://ip.my-proxy.com/")
+	browser.driver.save_screenshot("proxy.jpg")
 	
-	ip_element = browser.driver.find_element_by_xpath('//*[@id="section_left"]/div[2]/a')
+	ip_element = browser.driver.find_element_by_xpath('//*[@id="findipinfo"]/div[1]/b')
 	ip_address = ip_element.text
 	
-	assert proxy.proxy["ip"] == ip_address
+	assert browser.proxy.ip == ip_address

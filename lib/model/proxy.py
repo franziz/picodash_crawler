@@ -2,10 +2,14 @@ from ..factory.config import ConfigFactory
 from ..exceptions     import NoProxyFound
 import pymongo
 import random
+import copy
 
 class Proxy:
 	def __init__(self):
-		self.proxy = None
+		self.ip 	  = None
+		self.port 	  = None
+		self.username = None
+		self.password = None
 
 	def get_proxy(self):
 		""" Exceptions:
@@ -27,11 +31,18 @@ class Proxy:
 
 		if docs.count() == 0:
 			raise NoProxyFound("Cannot find proxy given configuration.")
-		docs       = [doc for doc in docs]
-		self.proxy = random.sample(docs,1)[0]
+		docs  = [doc for doc in docs]
+		proxy = random.sample(docs,1)[0]
 
-		return [
-			"--proxy=%s:%s" % (self.proxy["ip"], self.proxy["port"]),
-			"--proxy-auth=%s:%s" % (self.proxy["username"], self.proxy["password"]),
-			"--proxy-type=http"
-		]
+		self.ip 	  = proxy["ip"]
+		self.port 	  = proxy["port"]
+		self.username = proxy["username"]
+		self.password = proxy["password"]
+
+		return copy.deepcopy(self)
+
+		# return [
+		# 	"--proxy=%s:%s" % (self.proxy["ip"], self.proxy["port"]),
+		# 	"--proxy-auth=%s:%s" % (self.proxy["username"], self.proxy["password"]),
+		# 	"--proxy-type=http"
+		# ]

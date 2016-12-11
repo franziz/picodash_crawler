@@ -1,7 +1,16 @@
-from ..factory.extractor import ExtractorFactory
-from ..model.proxy       import Proxy
-from ..model.browser     import Browser
-from ..exceptions 		 import VerificationIsNeeded, CannotFindElements
+from selenium.common.exceptions import WebDriverException
+from ..factory.extractor 		import ExtractorFactory
+from ..model.location    		import Location
+from ..model.post        		import Post
+from ..model.proxy       		import Proxy
+from ..model.browser     		import Browser
+from ..exceptions 		 		import VerificationIsNeeded, CannotFindElements
+import os
+import arrow
+import time
+import random
+import bson.json_util
+import copy
 
 class PicodashEngine:
 	def __init__(self, **kwargs):
@@ -16,15 +25,10 @@ class PicodashEngine:
 			- CannotFindElements (XPATHExtractor.extract)
 		"""
 		self.browser.get("https://www.picodash.com/")
+		self.browser.driver.save_screenshot(os.path.join(os.getcwd(),"screenshot", "before_login.jpg"))
 
+		self.browser.execute_script("return loginPop()")
 		extractor = ExtractorFactory.get_extractor(ExtractorFactory.XPATH)
-		btn_login = extractor.extract(
-			browser = self.browser,
-			  xpath = '//*[@id="loginTab"]',
-			   wait = '//*[@id="loginTab"]'
-		)
-		btn_login.click()
-		
 		btn_yes = extractor.extract(
 			browser = self.browser,
 			  xpath = '//*[@id="lb-popup"]/div/a[1]',
@@ -73,7 +77,6 @@ class PicodashEngine:
 			)
 			if need_to_verify.text == "Verify Your Account":
 				raise VerificationIsNeeded("You need to verify your account")
-			print(need_to_verify.text)
 		except CannotFindElements as ex:
 			pass
 
@@ -94,35 +97,76 @@ class PicodashEngine:
 
 		self.show_instagram_login()
 		self.instagram_login(self.username, self.password)
-		self.browser.driver.save_screenshot("after_login.jpg")
-
+		self.browser.driver.save_screenshot(os.path.join(os.getcwd(),"screenshot", "after_login.jpg"))
 
 	def crawl(self, location=None, saver=None, **kwargs):
 		""" Exceptions:
-			- AssertionErrror
+			- AssertionErrror (Browser.execute_script)
+			- WebDriverException
 		"""
 		assert location is not None, "location is not defined."
 		assert saver    is not None, "saver is not defined."
 
-		start_date = kwargs.get("start_date", "")
-		end_date   = kwargs.get("end_date","")
+		start_date = kwargs.get("start_date", arrow.now().floor("day").timestamp)
+		end_date   = kwargs.get("end_date", arrow.now().ceil("day").timestamp)
 
 		# https://www.picodash.com/explore/map#/14.6723,120.9596/1000/-
 		# Go to the location
-		self.browser.get("https://www.picodash.com/explore/map#/%s,%s/%s/%s-%s" % (
+		url = "https://www.picodash.com/explore/map#/%s,%s/%s/%s-%s" % (
 			location.lat,
 			location.long,
 			location.radius,
-			start_date,
-			end_date
-		))
-
-		extractor   = ExtractorFactory.get_extractor(ExtractorFactory.XPATH)
-		total_posts = extractor.extract(
-			browser = self.browser,
-			  xpath = '//div[@id="counter"]',
-			   wait = '//div[@id="counter"]'
+			end_date,
+			start_date
 		)
-		total_posts = total_posts.text
+		print("Crawling: %s " % url)
+		self.browser.get(url)
 
-		print("Total Posts: %s" % total_posts)
+		# Scroll until you cannot scroll again
+		has_next    = True
+		start_index = 0
+		while has_next:
+			print("Scrolling")
+			self.browser.execute_script("getMediaNextPage()")
+			loading = True
+
+			while loading:
+				time.sleep(random.randint(1000,5000)/1000)
+				loading = self.browser.execute_script("return loading")
+				print("Loading: %s" % loading)
+				loading = True if loading == 1 else False
+			has_next = self.browser.execute_script("return next")
+			has_next = False if has_next == 0 else True
+			data = self.browser.execute_script("return dat")
+
+			if data is None:
+				data = []
+
+			print("Current Number of Posts: %s" % len(data))
+			for datum in data[start_index:]:
+				post 						  = Post()
+				post.track 					  = location.track
+				post.city  					  = location.city
+				post.country 				  = location.country
+				post.post_caption_text 		  = datum["caption"]
+				post.post_id  		   		  = datum["id"]
+				post.post_std_res_picture_url = datum["images"]["standard_resolution"]["url"]
+				post.post_likes   			  = datum["likes"]["count"]
+				post.post_url 				  = datum["link"]
+				post.post_geolocation		  = Location(
+													 lat = datum["location"]["latitude"],
+													long = datum["location"]["longitude"],
+													name = datum["location"]["name"],
+													  id = datum["location"]["id"]
+												)
+				post.post_tags 				  = datum["tags"]
+				post.post_from_user_id        = datum["user"]["id"]
+				post.post_from_username 	  = datum["user"]["username"]
+				post.post_user_profile_pic    = datum["user"]["profile_picture"]
+				post.query_search_location    = copy.deepcopy(location)
+				post.post_created_time  	  = arrow.get(datum["created_time"]).format("YYYY-MM-DD HH:mm:ss")
+				post.post_inserted_date       = arrow.now().format("YYYY-MM-DD")
+				post.post_inserted_date_iso   = arrow.utcnow().datetime
+
+				saver.save(post)
+			start_index = len(data)
