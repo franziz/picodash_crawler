@@ -1,8 +1,0 @@
-{
-	"proxy":{
-		"ip": "220.100.163.132",
-		"port": 27017,
-		"database": "proxies",
-		"collection": "manual"
-	}
-}
