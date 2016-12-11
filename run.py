@@ -34,7 +34,7 @@ def execute_thread(data):
 @click.option("--start", default=arrow.now().timestamp, help="Crawling Start Date [yyyy/mm/dd]", type=str)
 @click.option("--end", default=arrow.now().timestamp, help="Crawling End Date [yyyy/mm/dd]", type=str)
 @click.option("--workers", default=1, help="Crawler workers. default = 1")
-@click.option("--noproxy", default=True, help="true or false", type=bool)
+@click.option("--noproxy", default=False, help="true or false", type=bool)
 def main(start, end, workers, noproxy):
 	# clear
 	shutil.rmtree(os.path.join(os.getcwd(),"screenshot"))
