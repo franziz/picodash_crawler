@@ -66,7 +66,7 @@ class PicodashEngine:
 			   wait = '//*[@id="login-form"]/p[3]/input'
 		)
 		btn_login.click()
-
+		self.browser.driver.save_screenshot(os.path.join(os.getcwd(),"screenshot", "login.jpg"))
 		try:
 			# Checking do I need to verify my account or not
 			need_to_verify = extractor.extract(
