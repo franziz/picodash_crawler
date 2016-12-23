@@ -148,7 +148,7 @@ class PicodashEngine:
 				post.track 					  = location.track
 				post.city  					  = location.city
 				post.country 				  = location.country
-				post.post_caption_text 		  = datum["caption"]
+				post.post_caption_text 		  = datum["caption"]["text"]
 				post.post_id  		   		  = datum["id"]
 				post.post_std_res_picture_url = datum["images"]["standard_resolution"]["url"]
 				post.post_likes   			  = datum["likes"]["count"]
