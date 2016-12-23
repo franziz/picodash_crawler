@@ -62,7 +62,7 @@ You need a valid Instagram account that has been linked to Picodash.
 {
 	"proxy":{
 		"ip": "xxx",
-		"port": xxx,
+		"port": 0,
 		"database": "xxx",
 		"collection": "xxx"
 	}
@@ -74,10 +74,10 @@ You need a valid Instagram account that has been linked to Picodash.
 {
 	"sentry":{
 		"ip": "xxx",
-		"port": xxx,
+		"port": 0,
 		"public_key": "xxx",
 		"secret_key": "xxx",
-		"project_id": xxx
+		"project_id": 0
 	}
 }
 ```
