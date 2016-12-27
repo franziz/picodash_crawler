@@ -112,9 +112,12 @@ Please make sure that you have correct `connectionString` parameter.
 	}
 }
 ```
+> **Note:**
 > You need a valid Instagram account that has been linked to Picodash. 
+> This configuration cannot have multiple account.
 
 ### proxy.json
+This configuration need to point a MongoDB database that store all proxy information. 
 ```json
 {
 	"proxy":{
