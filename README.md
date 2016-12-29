@@ -20,6 +20,8 @@ In order to install Picodash crawler, you need to:
  - `docker pull franziz/picodash-crawler:phantomjs`
  - `git clone http://github.com/franziz/picodash_crawler`
  - `cd picodash_crawler`
+ - `git remote update`
+ - `git checkout new-logic`
  - `mkdir config`
  - `cd config`
  - Make every configuration inside config folder.
