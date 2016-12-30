@@ -26,7 +26,8 @@ In order to install Picodash crawler, you need to:
  - `cd config`
  - Make every configuration inside config folder.
  - `cd ..` to exit from config folder
- - `docker run -it --name picodash-crawler -v $(pwd):/root/app -w /root/app franziz/picodash-crawler:phantomjs python run.py`
+ - `docker run -it --name picodash-crawler -v $(pwd):/root/app -w /root/app franziz/picodash-crawler:phantomjs bash`
+ - `python run.py` in container shell.
 
 ## Arguments
 There are several arguments accepted by run.py:
